@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sistemajic;
+package javaapplication2;
 
 /**
  *
  * @author Luis Ortiz-PC
  */
-public class SistemaJIC {
+public class JavaApplication2 {
 
     /**
      * @param args the command line arguments
