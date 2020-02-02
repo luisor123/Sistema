@@ -49,11 +49,9 @@ public class VentaService {
         boolean bandera = false;
         try {
             s = conection.createStatement();
-            int z = s.executeUpdate("UPDATE venta SET cliente_id = "+venta.cliente_id
-                    +", usuario_id = "+venta.usuario_id+", tipodocumento_id = "+venta.tipodocumento_id
-                    +", numdocumento = "+venta.numdocumento+", numpedido = "+venta.numpedido
-                    +", preciototal = "+venta.preciototal+", fecha = '"+venta.fecha+
-                    "' WHERE id = "+venta.id);
+            int z = s.executeUpdate("UPDATE venta SET tipodocumento_id = "+venta.tipodocumento_id
+                    +", numdocumento = '"+venta.numdocumento+"', numpedido = "+venta.numpedido
+                    +", fechaventa = '"+venta.fechaventa+"' WHERE id = "+venta.id);
             if (z == 1) {
                 bandera = true;
                 JOptionPane.showMessageDialog(null, "La venta N°: "+venta.numdocumento+
@@ -62,7 +60,7 @@ public class VentaService {
                 JOptionPane.showMessageDialog(null, "Error al ingresar venta.", "Error", JOptionPane.ERROR);
             }
         } catch (Exception e) {
-            System.out.println("Error de conexion: "+e.getMessage());
+            System.out.println("Error: "+e.getMessage());
             JOptionPane.showMessageDialog(null, "Error: "+e.getMessage(), "Error", JOptionPane.ERROR);
         }
         return bandera;
@@ -106,7 +104,7 @@ public class VentaService {
         Venta venta = null;
         try {
             s = conection.createStatement();
-            rs = s.executeQuery("SELECT * FROM venta WHERE numpedido = "+numpedido+"");
+            rs = s.executeQuery("SELECT * FROM venta WHERE numpedido = "+numpedido);
             while (rs.next()) {
                 venta = new Venta();
                 venta.setId(rs.getInt("id"));
@@ -114,7 +112,7 @@ public class VentaService {
                 venta.setUsuario_id(rs.getInt("usuario_id"));
                 venta.setTipodocumento_id(rs.getInt("tipodocumento_id"));
                 venta.setNumpedido(rs.getInt("numpedido"));
-                venta.setNumdocumento(rs.getInt("numdocumento"));
+                venta.setNumdocumento(rs.getString("numdocumento"));
                 venta.setPreciototal(rs.getDouble("preciototal"));
                 venta.setFecha(rs.getString("fecha"));
             }

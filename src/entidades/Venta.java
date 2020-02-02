@@ -14,10 +14,11 @@ public class Venta {
     public Integer cliente_id;
     public Integer usuario_id;
     public Integer tipodocumento_id;
-    public Integer numdocumento;
+    public String numdocumento;
     public Integer numpedido;
     public Double preciototal;
     public String fecha;
+    public String fechaventa;
 
     public Venta() {
     }
@@ -54,11 +55,11 @@ public class Venta {
         this.tipodocumento_id = tipodocumento_id;
     }
 
-    public Integer getNumdocumento() {
+    public String getNumdocumento() {
         return numdocumento;
     }
 
-    public void setNumdocumento(Integer numdocumento) {
+    public void setNumdocumento(String numdocumento) {
         this.numdocumento = numdocumento;
     }
 
@@ -85,5 +86,13 @@ public class Venta {
     public void setFecha(String fecha) {
         this.fecha = fecha;
     }
+
+    public String getFechaventa() {
+        return fechaventa;
+    }
+
+    public void setFechaventa(String fechaventa) {
+        this.fechaventa = fechaventa;
+    }    
     
 }

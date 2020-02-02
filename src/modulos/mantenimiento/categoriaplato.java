@@ -32,6 +32,7 @@ public class categoriaplato extends javax.swing.JFrame {
     
     public categoriaplato() {
         initComponents();
+        this.setLocationRelativeTo(this);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {

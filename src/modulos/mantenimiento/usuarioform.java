@@ -25,8 +25,10 @@ public class usuarioform extends javax.swing.JFrame {
     private Connection conection = null;
     private UsuarioService usuarioservice;
     private Usuario usuario;
+    
     public usuarioform() {
         initComponents();
+        this.setLocationRelativeTo(this);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
@@ -108,7 +110,7 @@ public class usuarioform extends javax.swing.JFrame {
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(0, 112, 192));
-        jLabel4.setText("CORREO *");
+        jLabel4.setText("CORREO");
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(0, 112, 192));
@@ -151,7 +153,7 @@ public class usuarioform extends javax.swing.JFrame {
                         .addComponent(jLabel5)
                         .addGap(18, 18, 18)
                         .addComponent(rsmtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -247,8 +249,7 @@ public class usuarioform extends javax.swing.JFrame {
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
-        if (!rsmtNombres.getText().equals("") && !rsmtDni.getText().equals("") && 
-                !rsmtCorreo.getText().equals("") && !rsmtPassword.getText().equals("") ){
+        if (!rsmtNombres.getText().equals("") && !rsmtDni.getText().equals("") && !rsmtPassword.getText().equals("") ){
             usuario.setNombres(rsmtNombres.getText());
             usuario.setDni(rsmtDni.getText());
             usuario.setDireccion(rsmtDireccion.getText());
@@ -265,7 +266,7 @@ public class usuarioform extends javax.swing.JFrame {
                 }
             }
         } else {
-            JOptionPane.showMessageDialog(null, "Nombres, dni, correo y password es obligatorio.", 
+            JOptionPane.showMessageDialog(null, "Nombres, dni y password es obligatorio.", 
                     "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btnGuardarActionPerformed

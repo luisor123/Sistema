@@ -32,6 +32,7 @@ public class clienteform extends javax.swing.JFrame {
     
     public clienteform() {
         initComponents();
+        this.setLocationRelativeTo(this);
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {

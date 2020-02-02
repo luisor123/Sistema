@@ -38,11 +38,13 @@ public class buscarclienteform extends javax.swing.JFrame {
     
     public buscarclienteform() {
         initComponents();
+        this.setLocationRelativeTo(this);
         iniciarFormulario();
     }
     
     public buscarclienteform(pedidosform pedidoform) {
         iniciarFormulario();
+        this.setLocationRelativeTo(this);
         this.pedidoform = pedidoform;
     }
     
