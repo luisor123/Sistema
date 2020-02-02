@@ -15,6 +15,7 @@ import modulos.mantenimiento.clienteform;
 import modulos.mantenimiento.platoform;
 import modulos.mantenimiento.usuarioform;
 import modulos.procesos.pedidosform;
+import modulos.procesos.ventaform;
 
 /**
  *
@@ -78,6 +79,7 @@ public class menuprincipal extends javax.swing.JFrame {
         jMenu2 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
         jmiPedido = new javax.swing.JMenuItem();
+        jmiVenta = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -154,6 +156,14 @@ public class menuprincipal extends javax.swing.JFrame {
         });
         jMenu3.add(jmiPedido);
 
+        jmiVenta.setText("Venta");
+        jmiVenta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiVentaActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jmiVenta);
+
         jMenuBar1.add(jMenu3);
 
         jMenu4.setBackground(new java.awt.Color(255, 255, 255));
@@ -201,6 +211,11 @@ public class menuprincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
         new pedidosform().setVisible(true);
     }//GEN-LAST:event_jmiPedidoActionPerformed
+
+    private void jmiVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiVentaActionPerformed
+        // TODO add your handling code here:
+        new ventaform().setVisible(true);
+    }//GEN-LAST:event_jmiVentaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -253,6 +268,7 @@ public class menuprincipal extends javax.swing.JFrame {
     private javax.swing.JMenuItem jmiPedido;
     private javax.swing.JMenuItem jmiPlato;
     private javax.swing.JMenuItem jmiUsuario;
+    private javax.swing.JMenuItem jmiVenta;
     private javax.swing.JPanel panelImagen;
     // End of variables declaration//GEN-END:variables
 }
