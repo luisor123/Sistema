@@ -9,16 +9,16 @@ package entidades;
  *
  * @author javie
  */
-public class Cliente {
-    
+public class Usuario {
     public Integer id = 0;
     public String nombres;
     public String dni;
     public String direccion;
-    public String ruc;
+    public String correo;
     public String telefono;
+    public String password;
 
-    public Cliente() {
+    public Usuario() {
     }
 
     public Integer getId() {
@@ -53,12 +53,12 @@ public class Cliente {
         this.direccion = direccion;
     }
 
-    public String getRuc() {
-        return ruc;
+    public String getCorreo() {
+        return correo;
     }
 
-    public void setRuc(String ruc) {
-        this.ruc = ruc;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
     public String getTelefono() {
@@ -68,6 +68,15 @@ public class Cliente {
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     
     
 }

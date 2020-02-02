@@ -5,8 +5,13 @@
  */
 package modulos.mantenimiento;
 
+import entidades.Usuario;
+import java.sql.Connection;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import modulos.sistema.menuprincipal.Conexion;
+import servicios.UsuarioService;
 
 /**
  *
@@ -17,14 +22,30 @@ public class usuarioform extends javax.swing.JFrame {
     /**
      * Creates new form usuarioform
      */
+    private Connection conection = null;
+    private UsuarioService usuarioservice;
+    private Usuario usuario;
     public usuarioform() {
         initComponents();
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
         }
+        Conexion conexion = new Conexion();
+        conection = conexion.iniciarConexion();
+        usuarioservice = new UsuarioService((conection));
+        usuario = new Usuario();
     }
 
+    public void limpiar() {
+        rsmtNombres.setText("");
+        rsmtDni.setText("");
+        rsmtDireccion.setText("");
+        rsmtCorreo.setText("");
+        rsmtTelefono.setText("");
+        rsmtPassword.setText("");
+        usuario = new Usuario();
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -34,6 +55,7 @@ public class usuarioform extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         rsmtNombres = new rojeru_san.RSMTextFull();
@@ -46,16 +68,20 @@ public class usuarioform extends javax.swing.JFrame {
         rsmtCorreo = new rojeru_san.RSMTextFull();
         rsmtTelefono = new rojeru_san.RSMTextFull();
         jLabel6 = new javax.swing.JLabel();
-        txtPassword = new rojeru_san.RSMPassView();
+        rsmtPassword = new rojeru_san.RSMPassView();
+        jPanel4 = new javax.swing.JPanel();
+        btnGuardar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos generales"));
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 112, 192));
-        jLabel1.setText("NOMBRES");
+        jLabel1.setText("NOMBRES *");
 
         rsmtNombres.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
         rsmtNombres.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
@@ -64,7 +90,7 @@ public class usuarioform extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 112, 192));
-        jLabel2.setText("DNI");
+        jLabel2.setText("DNI *");
 
         rsmtDni.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
         rsmtDni.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
@@ -82,7 +108,7 @@ public class usuarioform extends javax.swing.JFrame {
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(0, 112, 192));
-        jLabel4.setText("CORREO");
+        jLabel4.setText("CORREO *");
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(0, 112, 192));
@@ -100,11 +126,11 @@ public class usuarioform extends javax.swing.JFrame {
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(0, 112, 192));
-        jLabel6.setText("CONTRASEÑA");
+        jLabel6.setText("CONTRASEÑA *");
 
-        txtPassword.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
-        txtPassword.setModoMaterial(true);
-        txtPassword.setPlaceholder("Contraseña...");
+        rsmtPassword.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
+        rsmtPassword.setModoMaterial(true);
+        rsmtPassword.setPlaceholder("Contraseña...");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -125,7 +151,7 @@ public class usuarioform extends javax.swing.JFrame {
                         .addComponent(jLabel5)
                         .addGap(18, 18, 18)
                         .addComponent(rsmtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 60, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -138,7 +164,7 @@ public class usuarioform extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                        .addComponent(rsmtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
                 .addGap(38, 38, 38))
         );
         jPanel3Layout.setVerticalGroup(
@@ -162,32 +188,113 @@ public class usuarioform extends javax.swing.JFrame {
                         .addComponent(rsmtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel5)
                         .addComponent(jLabel6))
-                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(rsmtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
-        getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/guardar.png"))); // NOI18N
+        btnGuardar.setToolTipText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnGuardar)
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        // TODO add your handling code here:
+        if (!rsmtNombres.getText().equals("") && !rsmtDni.getText().equals("") && 
+                !rsmtCorreo.getText().equals("") && !rsmtPassword.getText().equals("") ){
+            usuario.setNombres(rsmtNombres.getText());
+            usuario.setDni(rsmtDni.getText());
+            usuario.setDireccion(rsmtDireccion.getText());
+            usuario.setCorreo(rsmtCorreo.getText());
+            usuario.setTelefono(rsmtTelefono.getText());
+            usuario.setPassword(rsmtPassword.getText());
+            //
+            int grabar = JOptionPane.showConfirmDialog(this, "¿Deseas grabar el usuario?", 
+                    "Registrar", JOptionPane.YES_NO_CANCEL_OPTION);
+            if (grabar == 0) {
+                boolean rpta = usuarioservice.ingresarUsuario(usuario);
+                if (rpta) {
+                    limpiar();
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Nombres, dni, correo y password es obligatorio.", 
+                    "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    public static void main(String args[]) {
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new usuarioform().setVisible(true);
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnGuardar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private rojeru_san.RSMTextFull rsmtCorreo;
     private rojeru_san.RSMTextFull rsmtDireccion;
     private rojeru_san.RSMTextFull rsmtDni;
     private rojeru_san.RSMTextFull rsmtNombres;
+    private rojeru_san.RSMPassView rsmtPassword;
     private rojeru_san.RSMTextFull rsmtTelefono;
-    private rojeru_san.RSMPassView txtPassword;
     // End of variables declaration//GEN-END:variables
 }

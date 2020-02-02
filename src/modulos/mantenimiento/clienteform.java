@@ -5,8 +5,15 @@
  */
 package modulos.mantenimiento;
 
+import entidades.Cliente;
+import java.sql.Connection;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.table.DefaultTableModel;
+import modulos.sistema.menuprincipal.Conexion;
+import servicios.ClienteService;
 
 /**
  *
@@ -17,12 +24,66 @@ public class clienteform extends javax.swing.JFrame {
     /**
      * Creates new form clienteform
      */
+    private Connection conection = null;
+    private ClienteService clienteservice;
+    private Cliente cliente;
+    private DefaultTableModel modeltable;
+    private String accion = "add";
+    
     public clienteform() {
         initComponents();
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
         }
+        Conexion conexion = new Conexion();
+        conection = conexion.iniciarConexion();
+        clienteservice = new ClienteService(conection);
+        cliente = new Cliente();
+        modeltable = (DefaultTableModel)tableClientes.getModel();
+        listarClientes();
+    }
+    
+    public void listarClientes() {
+        limpiarTabla();
+        ArrayList<Cliente> listaclientes = clienteservice.listarClientes();
+        for (int i = 0; i < listaclientes.size(); i++) {
+            System.out.println(listaclientes.get(i).id);
+            System.out.println(listaclientes.get(i).nombres);
+            modeltable.addRow(new Object[]{listaclientes.get(i).id, listaclientes.get(i).nombres,
+                listaclientes.get(i).dni,listaclientes.get(i).direccion, listaclientes.get(i).ruc,
+                listaclientes.get(i).telefono});
+        }
+        //tableClientes.setModel(model);
+    }
+    
+    public void limpiarTabla() {
+        try {
+            int filas=tableClientes.getRowCount();
+            for (int i = 0;filas>i; i++) {
+                modeltable.removeRow(0);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al limpiar la tabla.");
+        }
+    }
+    
+    public void limpiar() {
+        rsmtCodigo.setText("");
+        rsmtNombres.setText("");
+        rsmtDni.setText("");
+        rsmtDireccion.setText("");
+        rsmtRuc.setText("");
+        rsmtTelefono.setText("");
+        cliente = new Cliente();
+    }
+    
+    public void editable(boolean bandera) {
+        rsmtNombres.setEditable(bandera);
+        rsmtDni.setEditable(bandera);
+        rsmtDireccion.setEditable(bandera);
+        rsmtRuc.setEditable(bandera);
+        rsmtTelefono.setEditable(bandera);
     }
 
     /**
@@ -46,6 +107,8 @@ public class clienteform extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         rsmtRuc = new rojeru_san.RSMTextFull();
         rsmtTelefono = new rojeru_san.RSMTextFull();
+        jLabel6 = new javax.swing.JLabel();
+        rsmtCodigo = new rojeru_san.RSMTextFull();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tableClientes = new javax.swing.JTable();
@@ -67,21 +130,25 @@ public class clienteform extends javax.swing.JFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(0, 112, 192));
-        jLabel1.setText("NOMBRES");
+        jLabel1.setText("CÓDIGO");
 
         rsmtNombres.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
         rsmtNombres.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
+        rsmtNombres.setMaximumSize(new java.awt.Dimension(50, 50));
         rsmtNombres.setModoMaterial(true);
         rsmtNombres.setPlaceholder("Ingrese nombres...");
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 112, 192));
-        jLabel2.setText("DNI");
+        jLabel2.setText("DNI *");
 
         rsmtDni.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
         rsmtDni.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
+        rsmtDni.setMaximumSize(new java.awt.Dimension(8, 8));
+        rsmtDni.setMinimumSize(new java.awt.Dimension(8, 8));
         rsmtDni.setModoMaterial(true);
         rsmtDni.setPlaceholder("Ingrese dni...");
+        rsmtDni.setSoloNumeros(true);
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 112, 192));
@@ -110,6 +177,17 @@ public class clienteform extends javax.swing.JFrame {
         rsmtTelefono.setModoMaterial(true);
         rsmtTelefono.setPlaceholder("Ingrese teléfono...");
 
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(0, 112, 192));
+        jLabel6.setText("NOMBRES *");
+
+        rsmtCodigo.setEditable(false);
+        rsmtCodigo.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
+        rsmtCodigo.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
+        rsmtCodigo.setMaximumSize(new java.awt.Dimension(50, 50));
+        rsmtCodigo.setModoMaterial(true);
+        rsmtCodigo.setPlaceholder("Codigo...");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -117,50 +195,52 @@ public class clienteform extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(36, 36, 36)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel4)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(18, 18, 18)
-                        .addComponent(rsmtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(30, 30, 30)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(18, 18, 18)
-                                .addComponent(rsmtNombres, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(rsmtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel4))
-                        .addGap(38, 38, 38)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(rsmtRuc, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(rsmtDni, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(38, 38, 38))))
+                            .addComponent(rsmtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rsmtDni, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(rsmtRuc, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel3)
+                        .addComponent(jLabel5))
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(rsmtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rsmtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rsmtNombres, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(38, 38, 38))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rsmtNombres, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(rsmtDni, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(rsmtNombres, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel6)
+                        .addComponent(rsmtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(rsmtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(rsmtRuc, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel3)
+                        .addComponent(jLabel2)
+                        .addComponent(rsmtDni, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(rsmtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel4)
+                    .addComponent(rsmtRuc, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
 
@@ -169,15 +249,30 @@ public class clienteform extends javax.swing.JFrame {
 
         tableClientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
-                "Nombres", "Dni", "Dirección", "Ruc", "Teléfono"
+                "Código", "Nombres", "Dni", "Dirección", "Ruc", "Teléfono"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                true, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tableClientes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tableClientesMousePressed(evt);
+            }
+        });
+        tableClientes.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tableClientesKeyReleased(evt);
+            }
+        });
         jScrollPane1.setViewportView(tableClientes);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -202,18 +297,46 @@ public class clienteform extends javax.swing.JFrame {
 
         btnNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/nuevo.png"))); // NOI18N
         btnNuevo.setToolTipText("Nuevo");
+        btnNuevo.setEnabled(false);
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
+            }
+        });
 
         btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/guardar.png"))); // NOI18N
         btnGuardar.setToolTipText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
 
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/cancelar.png"))); // NOI18N
         btnCancelar.setToolTipText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         btnEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/editar.png"))); // NOI18N
         btnEditar.setToolTipText("Editar");
+        btnEditar.setEnabled(false);
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/cerrar.png"))); // NOI18N
         btnEliminar.setToolTipText("Eliminar");
+        btnEliminar.setEnabled(false);
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -274,6 +397,140 @@ public class clienteform extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        // TODO add your handling code here:
+        if (!rsmtNombres.getText().equals("") && !rsmtDni.getText().equals("") ){
+            if (accion.equals("add")) { // nuevo
+                cliente.setNombres(rsmtNombres.getText());
+                cliente.setDni(rsmtDni.getText());
+                cliente.setDireccion(rsmtDireccion.getText());
+                cliente.setRuc(rsmtRuc.getText());
+                cliente.setTelefono(rsmtTelefono.getText());
+                int grabar = JOptionPane.showConfirmDialog(this, "¿Deseas grabar el cliente?", "Registrar", JOptionPane.YES_NO_CANCEL_OPTION);
+                if (grabar == 0) {
+                    boolean rpta = clienteservice.ingresarCliente(cliente);
+                    if (rpta) {
+                        limpiar();
+                        listarClientes();
+                    }
+                }
+            } else { // update
+                if (cliente.id > 0) {
+                    cliente.setNombres(rsmtNombres.getText());
+                    cliente.setDni(rsmtDni.getText());
+                    cliente.setDireccion(rsmtDireccion.getText());
+                    cliente.setRuc(rsmtRuc.getText());
+                    cliente.setTelefono(rsmtTelefono.getText());
+                    int actualizar = JOptionPane.showConfirmDialog(this, "¿Deseas actulizar el cliente?", "Actualizar", 
+                            JOptionPane.YES_NO_CANCEL_OPTION);
+                    if (actualizar == 0) {
+                        boolean rpta = clienteservice.actualizarCliente(cliente);
+                        if (rpta) {
+                            limpiar();
+                            listarClientes();
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Seleccione una fila para actualizar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Nombres y dni son obligatorios", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        // TODO add your handling code here:
+        btnNuevo.setEnabled(true);
+        btnEditar.setEnabled(true);
+        btnEliminar.setEnabled(true);
+        btnGuardar.setEnabled(false);
+        btnCancelar.setEnabled(false);
+        editable(false);
+        accion = "cancelar";
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void tableClientesKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableClientesKeyReleased
+        // TODO add your handling code here:
+        try {
+            if ((evt.getKeyCode() == 38 || evt.getKeyCode()== 40) && (accion.equals("update") 
+                    || accion.equals("cancelar"))) {
+                int fila = tableClientes.getSelectedRow();
+                cliente.setId(Integer.parseInt(modeltable.getValueAt(fila, 0).toString()));
+                cliente.setNombres(modeltable.getValueAt(fila, 1).toString());
+                cliente.setDni(modeltable.getValueAt(fila, 2).toString());
+                cliente.setDireccion(modeltable.getValueAt(fila, 3).toString());
+                cliente.setRuc(modeltable.getValueAt(fila, 4).toString());
+                cliente.setTelefono(modeltable.getValueAt(fila, 5).toString());
+                rsmtCodigo.setText(String.valueOf(cliente.id));
+                rsmtNombres.setText(cliente.nombres);
+                rsmtDni.setText(cliente.dni);
+                rsmtDireccion.setText(cliente.direccion);
+                rsmtRuc.setText(cliente.ruc);
+                rsmtTelefono.setText(cliente.telefono);
+            }
+        } catch(Exception ex){
+        }
+    }//GEN-LAST:event_tableClientesKeyReleased
+
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        // TODO add your handling code here:
+        accion = "add";
+        editable(true);
+        limpiar();
+        btnNuevo.setEnabled(false);
+        btnEditar.setEnabled(false);
+        btnEliminar.setEnabled(false);
+        btnGuardar.setEnabled(true);
+        btnCancelar.setEnabled(true);
+    }//GEN-LAST:event_btnNuevoActionPerformed
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        // TODO add your handling code here:
+        accion = "update";
+        editable(true);
+        btnNuevo.setEnabled(false);
+        btnEditar.setEnabled(false);
+        btnEliminar.setEnabled(false);
+        btnGuardar.setEnabled(true);
+        btnCancelar.setEnabled(true);
+    }//GEN-LAST:event_btnEditarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        // TODO add your handling code here:
+        if (cliente.id > 0) {
+            int eliminar = JOptionPane.showConfirmDialog(this, "¿Deseas eliminar el cliente?", "Eliminar", JOptionPane.YES_NO_CANCEL_OPTION);
+            if (eliminar == 0) {
+                boolean rpta = clienteservice.eliminarCliente(cliente);
+                if (rpta) {
+                    limpiar();
+                    listarClientes();
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Seleccione una fila para eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void tableClientesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableClientesMousePressed
+        // TODO add your handling code here:
+        if (accion.equals("update") || accion.equals("cancelar")) {
+            int fila = tableClientes.getSelectedRow();
+            cliente.setId(Integer.parseInt(modeltable.getValueAt(fila, 0).toString()));
+            cliente.setNombres(modeltable.getValueAt(fila, 1).toString());
+            cliente.setDni(modeltable.getValueAt(fila, 2).toString());
+            cliente.setDireccion(modeltable.getValueAt(fila, 3).toString());
+            cliente.setRuc(modeltable.getValueAt(fila, 4).toString());
+            cliente.setTelefono(modeltable.getValueAt(fila, 5).toString());
+            rsmtCodigo.setText(String.valueOf(cliente.id));
+            rsmtNombres.setText(cliente.nombres);
+            rsmtDni.setText(cliente.dni);
+            rsmtDireccion.setText(cliente.direccion);
+            rsmtRuc.setText(cliente.ruc);
+            rsmtTelefono.setText(cliente.telefono);
+        }
+    }//GEN-LAST:event_tableClientesMousePressed
+
     /**
      * @param args the command line arguments
      */
@@ -320,11 +577,13 @@ public class clienteform extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private rojeru_san.RSMTextFull rsmtCodigo;
     private rojeru_san.RSMTextFull rsmtDireccion;
     private rojeru_san.RSMTextFull rsmtDni;
     private rojeru_san.RSMTextFull rsmtNombres;

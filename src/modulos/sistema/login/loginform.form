@@ -165,7 +165,7 @@
                         </Property>
                         <Property name="modoMaterial" type="boolean" value="true"/>
                         <Property name="name" type="java.lang.String" value="" noResource="true"/>
-                        <Property name="placeholder" type="java.lang.String" value="Nombre de usuario..."/>
+                        <Property name="placeholder" type="java.lang.String" value="Correo de usuario..."/>
                       </Properties>
                     </Component>
                     <Component class="rojeru_san.RSMPassView" name="txtPassword">

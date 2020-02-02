@@ -5,8 +5,18 @@
  */
 package modulos.mantenimiento;
 
+import entidades.CategoriaPlato;
+import entidades.Plato;
+import java.sql.Connection;
+import java.util.ArrayList;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.table.DefaultTableModel;
+import modulos.sistema.menuprincipal.Conexion;
+import servicios.CategoriaPlatoService;
+import servicios.PlatoService;
 
 /**
  *
@@ -17,12 +27,86 @@ public class platoform extends javax.swing.JFrame {
     /**
      * Creates new form platoform
      */
+    private Connection conection = null;
+    private PlatoService platoservice;
+    private CategoriaPlatoService categoriaservice;
+    private Plato plato;
+    private CategoriaPlato categoria;
+    private DefaultTableModel modeltable;
+    private DefaultComboBoxModel modelCombo;
+    private ArrayList<CategoriaPlato> listacategorias = new ArrayList<CategoriaPlato>();
+    private String accion = "add";
+    
     public platoform() {
         initComponents();
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
         }
+        Conexion conexion = new Conexion();
+        conection = conexion.iniciarConexion();
+        platoservice = new PlatoService(conection);
+        categoriaservice = new CategoriaPlatoService(conection);
+        plato = new Plato();
+        categoria = new CategoriaPlato();
+        modeltable = (DefaultTableModel)tablePlatos.getModel();
+        modelCombo = (DefaultComboBoxModel)cbCategoria.getModel();
+        listarCategorias();
+        listarPlatos();
+    }
+    
+    public void listarCategorias() {
+        listacategorias = categoriaservice.listarCategoriasPlato();
+        for (int i = 0; i < listacategorias.size(); i++) {
+            modelCombo.addElement(listacategorias.get(i).nombre);
+        }
+    }
+    
+    public void listarPlatos() {
+        limpiarTabla();
+        ArrayList<Plato> listaplatos = platoservice.listarPlatos();
+        for (int i = 0; i < listaplatos.size(); i++) {
+            modeltable.addRow(new Object[]{listaplatos.get(i).id, listaplatos.get(i).nombre,
+                listaplatos.get(i).precio,listaplatos.get(i).nombrecategoria, listaplatos.get(i).descripcion});
+        }
+    }
+    
+    
+    public void limpiarTabla() {
+        try {
+            int filas = tablePlatos.getRowCount();
+            for (int i = 0;filas>i; i++) {
+                modeltable.removeRow(0);
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error al limpiar la tabla.");
+        }
+    }
+    
+    public void limpiar() {
+        rsmtCodigo.setText("");
+        rsmtNombre.setText("");
+        rsmtPrecio.setText("");
+        cbCategoria.setSelectedIndex(0);
+        rsmtDescripcion.setText("");
+        plato = new Plato();
+    }
+    
+    public void editable(boolean bandera) {
+        rsmtNombre.setEditable(bandera);
+        rsmtPrecio.setEditable(bandera);
+        rsmtDescripcion.setEditable(bandera);
+    }
+    
+    public CategoriaPlato buscarCategoria(String nombre) {
+        CategoriaPlato categoria = null;
+        int n = -1;
+        do {
+            n++;
+            categoria = listacategorias.get(n);
+        }
+        while(!nombre.equals(listacategorias.get(n).nombre));
+        return categoria;
     }
 
     /**
@@ -46,14 +130,14 @@ public class platoform extends javax.swing.JFrame {
         btnEliminar = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        txtCodigo = new rojeru_san.RSMTextFull();
+        rsmtCodigo = new rojeru_san.RSMTextFull();
         jLabel2 = new javax.swing.JLabel();
-        txtNombre = new rojeru_san.RSMTextFull();
+        rsmtNombre = new rojeru_san.RSMTextFull();
         jLabel3 = new javax.swing.JLabel();
-        txtPrecio = new rojeru_san.RSMTextFull();
+        rsmtPrecio = new rojeru_san.RSMTextFull();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        txtDescripcion = new rojeru_san.RSMTextFull();
+        rsmtDescripcion = new rojeru_san.RSMTextFull();
         cbCategoria = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -66,15 +150,22 @@ public class platoform extends javax.swing.JFrame {
 
         tablePlatos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
                 "Codigo", "Nombre", "Precio", "Categoria", "Descripción"
             }
         ));
+        tablePlatos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tablePlatosMousePressed(evt);
+            }
+        });
+        tablePlatos.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tablePlatosKeyReleased(evt);
+            }
+        });
         jScrollPane1.setViewportView(tablePlatos);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -99,18 +190,46 @@ public class platoform extends javax.swing.JFrame {
 
         btnNuevo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/nuevo.png"))); // NOI18N
         btnNuevo.setToolTipText("Nuevo");
+        btnNuevo.setEnabled(false);
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
+            }
+        });
 
         btnGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/guardar.png"))); // NOI18N
         btnGuardar.setToolTipText("Guardar");
+        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarActionPerformed(evt);
+            }
+        });
 
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/cancelar.png"))); // NOI18N
         btnCancelar.setToolTipText("Cancelar");
+        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarActionPerformed(evt);
+            }
+        });
 
         btnEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/editar.png"))); // NOI18N
         btnEditar.setToolTipText("Editar");
+        btnEditar.setEnabled(false);
+        btnEditar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/cerrar.png"))); // NOI18N
         btnEliminar.setToolTipText("Eliminar");
+        btnEliminar.setEnabled(false);
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -149,43 +268,48 @@ public class platoform extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(0, 112, 192));
         jLabel1.setText("CODIGO");
 
-        txtCodigo.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
-        txtCodigo.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
-        txtCodigo.setModoMaterial(true);
-        txtCodigo.setPlaceholder("Ingrese codigo...");
+        rsmtCodigo.setEditable(false);
+        rsmtCodigo.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
+        rsmtCodigo.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
+        rsmtCodigo.setModoMaterial(true);
+        rsmtCodigo.setPlaceholder("Código...");
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 112, 192));
-        jLabel2.setText("NOMBRE");
+        jLabel2.setText("NOMBRE *");
 
-        txtNombre.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
-        txtNombre.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
-        txtNombre.setModoMaterial(true);
-        txtNombre.setPlaceholder("Ingrese nombre...");
+        rsmtNombre.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
+        rsmtNombre.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
+        rsmtNombre.setModoMaterial(true);
+        rsmtNombre.setPlaceholder("Ingrese nombre...");
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(0, 112, 192));
-        jLabel3.setText("PRECIO");
+        jLabel3.setText("PRECIO *");
 
-        txtPrecio.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
-        txtPrecio.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
-        txtPrecio.setModoMaterial(true);
-        txtPrecio.setPlaceholder("Ingrese precio...");
+        rsmtPrecio.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
+        rsmtPrecio.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
+        rsmtPrecio.setModoMaterial(true);
+        rsmtPrecio.setPlaceholder("Ingrese precio...");
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(0, 112, 192));
-        jLabel4.setText("CATEGORIA");
+        jLabel4.setText("CATEGORIA *");
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(0, 112, 192));
         jLabel5.setText("DESCRIPCION");
 
-        txtDescripcion.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
-        txtDescripcion.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
-        txtDescripcion.setModoMaterial(true);
-        txtDescripcion.setPlaceholder("Ingrese descripcion...");
+        rsmtDescripcion.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
+        rsmtDescripcion.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
+        rsmtDescripcion.setModoMaterial(true);
+        rsmtDescripcion.setPlaceholder("Ingrese descripcion...");
 
-        cbCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cbCategoria.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbCategoriaItemStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -197,24 +321,27 @@ public class platoform extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addGap(18, 18, 18)
-                        .addComponent(txtDescripcion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(rsmtDescripcion, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(rsmtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(rsmtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel4))
-                        .addGap(38, 38, 38)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(38, 38, 38))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addGap(18, 18, 18)))
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
+                            .addComponent(rsmtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
                             .addComponent(cbCategoria, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addGap(38, 38, 38))
         );
@@ -223,20 +350,20 @@ public class platoform extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rsmtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(rsmtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(rsmtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel3)
                         .addComponent(jLabel4))
                     .addComponent(cbCategoria))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(rsmtDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
                 .addGap(20, 20, 20))
         );
@@ -270,9 +397,156 @@ public class platoform extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * @param args the command line arguments
-     */
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        // TODO add your handling code here:
+        accion = "add";
+        editable(true);
+        limpiar();
+        btnNuevo.setEnabled(false);
+        btnEditar.setEnabled(false);
+        btnEliminar.setEnabled(false);
+        btnGuardar.setEnabled(true);
+        btnCancelar.setEnabled(true);
+    }//GEN-LAST:event_btnNuevoActionPerformed
+
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+        // TODO add your handling code here:
+        if (!rsmtNombre.getText().equals("") && !rsmtPrecio.getText().equals("") ){
+            if (accion.equals("add")) { // nuevo
+                plato.setNombre(rsmtNombre.getText());
+                plato.setPrecio(Double.parseDouble(rsmtPrecio.getText()));
+                plato.setCategoria_id(categoria.id);
+                plato.setDescripcion(rsmtDescripcion.getText());
+                //
+                int grabar = JOptionPane.showConfirmDialog(this, "¿Deseas grabar el plato?", "Registrar", JOptionPane.YES_NO_CANCEL_OPTION);
+                if (grabar == 0) {
+                    boolean rpta = platoservice.ingresarPlato(plato);
+                    if (rpta) {
+                        limpiar();
+                        listarPlatos();
+                    }
+                }
+            } else { // update
+                if (plato.id > 0) {
+                    plato.setNombre(rsmtNombre.getText());
+                    plato.setPrecio(Double.parseDouble(rsmtPrecio.getText()));
+                    plato.setCategoria_id(categoria.id);
+                    plato.setDescripcion(rsmtDescripcion.getText());
+                    int actualizar = JOptionPane.showConfirmDialog(this, "¿Deseas actulizar el plato?", "Actualizar", 
+                            JOptionPane.YES_NO_CANCEL_OPTION);
+                    if (actualizar == 0) {
+                        boolean rpta = platoservice.actualizarPlato(plato);
+                        if (rpta) {
+                            limpiar();
+                            listarPlatos();
+                        }
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Seleccione una fila para actualizar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Nombre, precio y categoria son obligatorios", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+        // TODO add your handling code here:
+        btnNuevo.setEnabled(true);
+        btnEditar.setEnabled(true);
+        btnEliminar.setEnabled(true);
+        btnGuardar.setEnabled(false);
+        btnCancelar.setEnabled(false);
+        editable(false);
+        accion = "cancelar";
+    }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
+        // TODO add your handling code here:
+        accion = "update";
+        editable(true);
+        btnNuevo.setEnabled(false);
+        btnEditar.setEnabled(false);
+        btnEliminar.setEnabled(false);
+        btnGuardar.setEnabled(true);
+        btnCancelar.setEnabled(true);
+    }//GEN-LAST:event_btnEditarActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+        // TODO add your handling code here:
+        if (plato.id > 0) {
+            int eliminar = JOptionPane.showConfirmDialog(this, "¿Deseas eliminar el plato?", "Eliminar", JOptionPane.YES_NO_CANCEL_OPTION);
+            if (eliminar == 0) {
+                boolean rpta = platoservice.eliminarPlato(plato);
+                if (rpta) {
+                    limpiar();
+                    listarPlatos();
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Seleccione una fila para eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void cbCategoriaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbCategoriaItemStateChanged
+        // TODO add your handling code here:
+        if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+            //Object item = evt.getItem();
+            categoria = buscarCategoria(evt.getItem().toString());
+          // do something with object
+       }
+    }//GEN-LAST:event_cbCategoriaItemStateChanged
+
+    private void tablePlatosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tablePlatosKeyReleased
+        // TODO add your handling code here:
+        try {
+            if ((evt.getKeyCode() == 38 || evt.getKeyCode()== 40) && (accion.equals("update") 
+                    || accion.equals("cancelar"))) {
+                int fila = tablePlatos.getSelectedRow();
+                plato.setId(Integer.parseInt(modeltable.getValueAt(fila, 0).toString()));
+                plato.setNombre(modeltable.getValueAt(fila, 1).toString());
+                plato.setPrecio(Double.parseDouble(modeltable.getValueAt(fila, 2).toString()));
+                CategoriaPlato categoria = buscarCategoria(modeltable.getValueAt(fila, 3).toString());
+                plato.setCategoria_id(categoria.id);
+                plato.setNombrecategoria(modeltable.getValueAt(fila, 3).toString());
+                plato.setDescripcion(modeltable.getValueAt(fila, 4).toString());
+                rsmtCodigo.setText(plato.id+"");
+                rsmtNombre.setText(plato.nombre);
+                cbCategoria.setSelectedItem(categoria.nombre);
+                rsmtPrecio.setText(plato.precio+"");
+                rsmtDescripcion.setText(plato.descripcion);
+            }
+        } catch(Exception ex){
+        }
+    }//GEN-LAST:event_tablePlatosKeyReleased
+
+    private void tablePlatosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablePlatosMousePressed
+        // TODO add your handling code here:
+        if (accion.equals("update") || accion.equals("cancelar")) {
+            int fila = tablePlatos.getSelectedRow();
+            plato.setId(Integer.parseInt(modeltable.getValueAt(fila, 0).toString()));
+            plato.setNombre(modeltable.getValueAt(fila, 1).toString());
+            plato.setPrecio(Double.parseDouble(modeltable.getValueAt(fila, 2).toString()));
+            CategoriaPlato categoria = buscarCategoria(modeltable.getValueAt(fila, 3).toString());
+            plato.setCategoria_id(categoria.id);
+            plato.setNombrecategoria(modeltable.getValueAt(fila, 3).toString());
+            plato.setDescripcion(modeltable.getValueAt(fila, 4).toString());
+            rsmtCodigo.setText(plato.id+"");
+            rsmtNombre.setText(plato.nombre);
+            cbCategoria.setSelectedItem(categoria.nombre);
+            rsmtPrecio.setText(plato.precio+"");
+            rsmtDescripcion.setText(plato.descripcion);
+        }
+    }//GEN-LAST:event_tablePlatosMousePressed
+
+    public static void main(String args[]) {
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new platoform().setVisible(true);
+            }
+        });
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
@@ -291,10 +565,10 @@ public class platoform extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private rojeru_san.RSMTextFull rsmtCodigo;
+    private rojeru_san.RSMTextFull rsmtDescripcion;
+    private rojeru_san.RSMTextFull rsmtNombre;
+    private rojeru_san.RSMTextFull rsmtPrecio;
     private javax.swing.JTable tablePlatos;
-    private rojeru_san.RSMTextFull txtCodigo;
-    private rojeru_san.RSMTextFull txtDescripcion;
-    private rojeru_san.RSMTextFull txtNombre;
-    private rojeru_san.RSMTextFull txtPrecio;
     // End of variables declaration//GEN-END:variables
 }

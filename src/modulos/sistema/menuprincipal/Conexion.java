@@ -27,21 +27,21 @@ public class Conexion {
         
     }
     
-    public void iniciarConexion() {
+    public Connection iniciarConexion() {
         if (conection != null) {
-            return;
+            return null;
         }
-        
-        String url = "jdbc:postgresql://localhost:5432/postgres";
-        String password = "1234";
+        String url="jdbc:postgresql://localhost:5432/postgres";
+        String contraseña ="123";
         try {
             Class.forName("org.postgresql.Driver");
-            conection = DriverManager.getConnection(url, "postgres", password);
-            if (conection != null) {
-                System.out.println("Conectando a Base de datos");
+            conection = DriverManager.getConnection(url, "postgres",contraseña);
+            if (conection !=null) {
+                System.out.println("Conexion exitosa");
             }
         } catch (Exception e) {
-            System.out.println("Problemas de Conexion");
+            System.out.println("Error de conexion: "+e.getMessage());
         }
+        return conection;
     }
 }

@@ -6,10 +6,15 @@
 package modulos.sistema.login;
 
 import com.sun.awt.AWTUtilities;
+import entidades.GlobalConstants;
+import entidades.Usuario;
+import java.sql.Connection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import modulos.sistema.menuprincipal.Conexion;
 import modulos.sistema.menuprincipal.menuprincipal;
 import rojeru_san.RSPanelsSlider;
+import servicios.UsuarioService;
 
 /**
  *
@@ -20,11 +25,18 @@ public class loginform extends javax.swing.JFrame {
     /**
      * Creates new form loginform
      */
+    private Connection conection = null;
+    private UsuarioService usuarioservice;
+    
     public loginform() {
         initComponents();
         
         AWTUtilities.setWindowOpaque(this, false);
         this.setLocationRelativeTo(this);
+        
+        Conexion conexion = new Conexion();
+        conection = conexion.iniciarConexion();
+        usuarioservice = new UsuarioService(conection);
     }
 
     /**
@@ -67,7 +79,7 @@ public class loginform extends javax.swing.JFrame {
         txtUser.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
         txtUser.setModoMaterial(true);
         txtUser.setName(""); // NOI18N
-        txtUser.setPlaceholder("Nombre de usuario...");
+        txtUser.setPlaceholder("Correo de usuario...");
 
         txtPassword.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
         txtPassword.setModoMaterial(true);
@@ -268,11 +280,13 @@ public class loginform extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSesionActionPerformed
-        // TODO add your handling code here:
+        // TODO add your handling code here:        
         if (txtUser.getText().isEmpty() || txtPassword.getText().isEmpty()) {
             lbMensaje.setText("¡Ingrese usuario y contraseña!");
         } else {
-            if (txtUser.getText().equals("javier") && txtPassword.getText().equals("123")) {
+            Usuario usuario = usuarioservice.login(txtUser.getText(), txtPassword.getText());
+            if (usuario != null) {
+                GlobalConstants.usuario = usuario;
                 rSPanelsSlider1.setPanelSlider(1, pnlCargando, RSPanelsSlider.DIRECT.RIGHT);
                 new Thread(new Runnable() {
                     @Override

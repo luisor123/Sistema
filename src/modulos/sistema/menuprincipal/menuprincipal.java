@@ -14,6 +14,7 @@ import modulos.mantenimiento.categoriaplato;
 import modulos.mantenimiento.clienteform;
 import modulos.mantenimiento.platoform;
 import modulos.mantenimiento.usuarioform;
+import modulos.procesos.pedidosform;
 
 /**
  *
@@ -76,11 +77,11 @@ public class menuprincipal extends javax.swing.JFrame {
         jmiUsuario = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
+        jmiPedido = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Sistema restaurant");
-        setPreferredSize(new java.awt.Dimension(1000, 601));
 
         panelImagen.setBackground(new java.awt.Color(255, 255, 255));
         panelImagen.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -144,6 +145,15 @@ public class menuprincipal extends javax.swing.JFrame {
         jMenu3.setBackground(new java.awt.Color(255, 255, 255));
         jMenu3.setText("PROCESOS");
         jMenu3.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+
+        jmiPedido.setText("Pedido");
+        jmiPedido.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jmiPedidoActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jmiPedido);
+
         jMenuBar1.add(jMenu3);
 
         jMenu4.setBackground(new java.awt.Color(255, 255, 255));
@@ -157,7 +167,7 @@ public class menuprincipal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelImagen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(panelImagen, javax.swing.GroupLayout.DEFAULT_SIZE, 940, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -186,6 +196,11 @@ public class menuprincipal extends javax.swing.JFrame {
         // TODO add your handling code here:
         new usuarioform().setVisible(true);
     }//GEN-LAST:event_jmiUsuarioActionPerformed
+
+    private void jmiPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jmiPedidoActionPerformed
+        // TODO add your handling code here:
+        new pedidosform().setVisible(true);
+    }//GEN-LAST:event_jmiPedidoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -222,7 +237,6 @@ public class menuprincipal extends javax.swing.JFrame {
                 } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
                 }
                 new menuprincipal().setVisible(true);
-                
             }
         });
     }
@@ -236,6 +250,7 @@ public class menuprincipal extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JMenuItem jmiCategoriaplato;
     private javax.swing.JMenuItem jmiCliente;
+    private javax.swing.JMenuItem jmiPedido;
     private javax.swing.JMenuItem jmiPlato;
     private javax.swing.JMenuItem jmiUsuario;
     private javax.swing.JPanel panelImagen;
