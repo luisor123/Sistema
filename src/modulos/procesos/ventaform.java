@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
@@ -66,10 +67,9 @@ public class ventaform extends javax.swing.JFrame {
 
     public void fechaActual() {
         Calendar c1 = Calendar.getInstance();
-        String fecha = c1.get(Calendar.DATE)+"-"+c1.get(Calendar.MONTH)+1+"-"+c1.get(Calendar.YEAR);
-        rsmtFecha.setText(fecha);
-        venta.setFecha(fecha);
-        System.out.println("fecha");
+        String fechaventa = ((JTextField)jdFecha.getDateEditor().getUiComponent()).getText();
+        jdFecha.setCalendar(c1);
+        venta.setFecha(fechaventa);
     }
     
     public void listarTiposDocumento() {
@@ -80,9 +80,11 @@ public class ventaform extends javax.swing.JFrame {
     }
     
     public void listarVentaDetalles(Venta venta) {
+        System.out.println("antes de limpjiar");
         limpiarTablaPlato();
         listaventadetalle = ventadetalleservice.listarVentaDetalles(venta);
         for (int i = 0; i < listaventadetalle.size(); i++) {
+            System.out.println(listaventadetalle.get(i).nombreplato);
             modeltableplatos.addRow(new Object[]{listaventadetalle.get(i).id, listaventadetalle.get(i).nombreplato,
                 listaventadetalle.get(i).cantidad, listaventadetalle.get(i).precio});
         }
@@ -137,12 +139,24 @@ public class ventaform extends javax.swing.JFrame {
     public void limpiar() {
         venta = new Venta();
         cliente = new Cliente();
+        rsmtNumerodocumento.setText("");
         rsmtNumeroPedido.setText("");
         lblFechaPedido.setText("");
         lblNombreCliente.setText("");
         lblMontoTotal.setText("S/ 0");
         listaventadetalle = new ArrayList<VentaDetalle>();
+        
+        btnPagar.setEnabled(false);
+        btnImprimir.setEnabled(false);
+        jdFecha.setEnabled(true);
+        // cbTipodocumento.setEnabled(true);
+        rsmtNumerodocumento.setEditable(true);
+        venta = new Venta();
         limpiarTablaPlato();
+    }
+    
+    public void setMostrarReporte() {
+        // aca es el codigo del reporte en jasper report
     }
     
     /**
@@ -159,7 +173,8 @@ public class ventaform extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         rsmtNumeroPedido = new rojeru_san.RSMTextFull();
         btnBuscar = new javax.swing.JButton();
-        rsmtFecha = new rojeru_san.RSMTextFull();
+        jdFecha = new com.toedter.calendar.JDateChooser();
+        jLabel7 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         lblFechaPedido = new javax.swing.JLabel();
@@ -173,6 +188,7 @@ public class ventaform extends javax.swing.JFrame {
         lblMontoTotal = new javax.swing.JLabel();
         btnLimpiar = new javax.swing.JButton();
         btnPagar = new javax.swing.JButton();
+        btnImprimir = new javax.swing.JButton();
         jPanel6 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         cbTipodocumento = new javax.swing.JComboBox<>();
@@ -181,6 +197,7 @@ public class ventaform extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Venta");
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -201,37 +218,50 @@ public class ventaform extends javax.swing.JFrame {
             }
         });
 
-        rsmtFecha.setPlaceholder("Fecha venta...");
+        jdFecha.setDateFormatString("yyyy/MM/dd HH:mm:ss");
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(0, 112, 192));
+        jLabel7.setText("Fecha venta");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(26, 26, 26)
+                .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(28, 28, 28)
+                .addGap(18, 18, 18)
                 .addComponent(rsmtNumeroPedido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
-                .addComponent(rsmtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(23, 23, 23))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel7)
+                .addGap(18, 18, 18)
+                .addComponent(jdFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 217, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(33, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnBuscar)
-                            .addComponent(jLabel1)
-                            .addComponent(rsmtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(12, 12, 12))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(rsmtNumeroPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(22, 22, 22))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addComponent(btnBuscar)
+                                .addGap(12, 12, 12))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(rsmtNumeroPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel1))
+                                .addGap(22, 22, 22))))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel7)
+                            .addComponent(jdFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
@@ -256,24 +286,27 @@ public class ventaform extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(jLabel2)
-                .addGap(63, 63, 63)
-                .addComponent(lblFechaPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(lblFechaPedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel4)
-                .addGap(62, 62, 62)
+                .addGap(18, 18, 18)
                 .addComponent(lblNombreCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(81, 81, 81))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(lblFechaPedido)
-                    .addComponent(jLabel4)
-                    .addComponent(lblNombreCliente))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblNombreCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblFechaPedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel2))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         jPanel4.setBackground(new java.awt.Color(255, 255, 255));
@@ -329,9 +362,19 @@ public class ventaform extends javax.swing.JFrame {
 
         btnPagar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/dinero.png"))); // NOI18N
         btnPagar.setToolTipText("Pagar");
+        btnPagar.setEnabled(false);
         btnPagar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPagarActionPerformed(evt);
+            }
+        });
+
+        btnImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/img/impresion.png"))); // NOI18N
+        btnImprimir.setToolTipText("Imprimir");
+        btnImprimir.setEnabled(false);
+        btnImprimir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImprimirActionPerformed(evt);
             }
         });
 
@@ -348,13 +391,16 @@ public class ventaform extends javax.swing.JFrame {
                 .addComponent(btnLimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnImprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(19, 19, 19))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnImprimir)
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(lblMontoTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel6))
@@ -456,13 +502,25 @@ public class ventaform extends javax.swing.JFrame {
                 lblNombreCliente.setText(cliente.getNombres()+" ("+cliente.getDni()+")");
                 lblMontoTotal.setText("S/ "+venta.getPreciototal());
                 listarVentaDetalles(venta);
+                rsmtNumerodocumento.setText("");
                 if (venta.numdocumento != null) {
-                    
                     btnPagar.setEnabled(false);
-                    rsmtFecha.setText(venta.getFechaventa());
+                    btnImprimir.setEnabled(true);
+                    jdFecha.setEnabled(false);
+                    rsmtNumerodocumento.setEditable(false);
+                    // cbTipodocumento.setEnabled(false);
+                    jdFecha.setDateFormatString(venta.getFechaventa());
                     rsmtNumerodocumento.setText(venta.numdocumento);
                     tipodocumento = buscarTipoDocumentoId(venta.tipodocumento_id);
                     onSelectedTipoDocumento(venta.tipodocumento_id);
+                    
+                } else {
+                    System.out.println("no hay ");
+                    btnPagar.setEnabled(true);
+                    btnImprimir.setEnabled(false);
+                    jdFecha.setEnabled(true);
+                    // cbTipodocumento.setEnabled(true);
+                    rsmtNumerodocumento.setEditable(true);
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "El número de pedido no existe..", "Error", JOptionPane.ERROR_MESSAGE);
@@ -477,11 +535,12 @@ public class ventaform extends javax.swing.JFrame {
 
     private void btnPagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPagarActionPerformed
         // TODO add your handling code here:
-        if (venta.id > 0 && !rsmtNumerodocumento.getText().equals("") && !rsmtFecha.getText().equals("")) {
+        String fechaventa = ((JTextField)jdFecha.getDateEditor().getUiComponent()).getText();
+        if (venta.id > 0 && !rsmtNumerodocumento.getText().equals("") && !fechaventa.equals("")) {
             venta.setTipodocumento_id(tipodocumento.id);
             venta.setNumdocumento(rsmtNumerodocumento.getText());
-            venta.setFechaventa(rsmtFecha.getText());
-            new CobrarMesa(venta, conection).setVisible(true);
+            venta.setFechaventa(fechaventa);
+            new CobrarMesa(venta, listaventadetalle, tipodocumento, conection, this).setVisible(true);
         } else {
             JOptionPane.showMessageDialog(null, "Busque el pedido e ingrese el numero de documento y fecha venta.", 
                     "Aviso", JOptionPane.WARNING_MESSAGE);
@@ -497,6 +556,10 @@ public class ventaform extends javax.swing.JFrame {
           // do something with object
        }
     }//GEN-LAST:event_cbTipodocumentoItemStateChanged
+
+    private void btnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnImprimirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -535,6 +598,7 @@ public class ventaform extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnImprimir;
     private javax.swing.JButton btnLimpiar;
     private javax.swing.JButton btnPagar;
     private javax.swing.JComboBox<String> cbTipodocumento;
@@ -544,6 +608,7 @@ public class ventaform extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -551,10 +616,10 @@ public class ventaform extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
+    private com.toedter.calendar.JDateChooser jdFecha;
     private javax.swing.JLabel lblFechaPedido;
     private javax.swing.JLabel lblMontoTotal;
     private javax.swing.JLabel lblNombreCliente;
-    private rojeru_san.RSMTextFull rsmtFecha;
     private rojeru_san.RSMTextFull rsmtNumeroPedido;
     private rojeru_san.RSMTextFull rsmtNumerodocumento;
     private javax.swing.JTable tablePlatos;

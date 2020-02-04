@@ -39,6 +39,31 @@ public class loginform extends javax.swing.JFrame {
         usuarioservice = new UsuarioService(conection);
     }
 
+    public void iniciarSesion() {
+        if (txtUser.getText().isEmpty() || txtPassword.getText().isEmpty()) {
+            lbMensaje.setText("¡Ingrese usuario y contraseña!");
+        } else {
+            Usuario usuario = usuarioservice.login(txtUser.getText(), txtPassword.getText());
+            if (usuario != null) {
+                GlobalConstants.usuario = usuario;
+                rSPanelsSlider1.setPanelSlider(1, pnlCargando, RSPanelsSlider.DIRECT.RIGHT);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(500);
+                            dispose();
+                            new menuprincipal().setVisible(true);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(loginform.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }).start();
+            } else {
+                lbMensaje.setText("¡Usuario y/o contraseña incorrectos!");
+            }
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -84,6 +109,11 @@ public class loginform extends javax.swing.JFrame {
         txtPassword.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
         txtPassword.setModoMaterial(true);
         txtPassword.setPlaceholder("Contraseña...");
+        txtPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPasswordActionPerformed(evt);
+            }
+        });
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/iconos/lbl-user.png"))); // NOI18N
@@ -227,6 +257,7 @@ public class loginform extends javax.swing.JFrame {
         );
 
         btnCerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/iconos/btn-cerrar.png"))); // NOI18N
+        btnCerrar.setFocusable(false);
         btnCerrar.setName("btnCerrar"); // NOI18N
         btnCerrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -235,6 +266,7 @@ public class loginform extends javax.swing.JFrame {
         });
 
         rSButtonRiple2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/assets/iconos/btn-minimizar.png"))); // NOI18N
+        rSButtonRiple2.setFocusable(false);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -281,35 +313,18 @@ public class loginform extends javax.swing.JFrame {
 
     private void btnSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSesionActionPerformed
         // TODO add your handling code here:        
-        if (txtUser.getText().isEmpty() || txtPassword.getText().isEmpty()) {
-            lbMensaje.setText("¡Ingrese usuario y contraseña!");
-        } else {
-            Usuario usuario = usuarioservice.login(txtUser.getText(), txtPassword.getText());
-            if (usuario != null) {
-                GlobalConstants.usuario = usuario;
-                rSPanelsSlider1.setPanelSlider(1, pnlCargando, RSPanelsSlider.DIRECT.RIGHT);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Thread.sleep(500);
-                            dispose();
-                            new menuprincipal().setVisible(true);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(loginform.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                    }
-                }).start();
-            } else {
-                lbMensaje.setText("¡Usuario y/o contraseña incorrectos!");
-            }
-        }
+        iniciarSesion();
     }//GEN-LAST:event_btnSesionActionPerformed
 
     private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
         // TODO add your handling code here:
         System.exit(0);
     }//GEN-LAST:event_btnCerrarActionPerformed
+
+    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
+        // TODO add your handling code here:
+        iniciarSesion();
+    }//GEN-LAST:event_txtPasswordActionPerformed
 
     /**
      * @param args the command line arguments

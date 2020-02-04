@@ -43,6 +43,7 @@ public class categoriaplato extends javax.swing.JFrame {
         categoria = new CategoriaPlato();
         modeltable = (DefaultTableModel)tableCategoriaPlato.getModel();
         listarCategorias();
+        rsmtNombre.setFocusable(true);
     }
 
     public void listarCategorias() {
@@ -105,6 +106,8 @@ public class categoriaplato extends javax.swing.JFrame {
         btnEliminar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Categoria plato");
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -117,6 +120,7 @@ public class categoriaplato extends javax.swing.JFrame {
 
         rsmtCodigo.setEditable(false);
         rsmtCodigo.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
+        rsmtCodigo.setFocusable(false);
         rsmtCodigo.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
         rsmtCodigo.setModoMaterial(true);
         rsmtCodigo.setPlaceholder("Código...");
@@ -168,11 +172,11 @@ public class categoriaplato extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(jLabel3)
                     .addComponent(rsmtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(rsmtDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addComponent(rsmtDescripcion, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
@@ -318,10 +322,10 @@ public class categoriaplato extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -349,7 +353,7 @@ public class categoriaplato extends javax.swing.JFrame {
             if (accion.equals("add")) { // nuevo
                 categoria.setNombre(rsmtNombre.getText());
                 categoria.setDescripcion(rsmtDescripcion.getText());
-                int grabar = JOptionPane.showConfirmDialog(this, "¿Deseas grabar la categoría?", "Registrar", JOptionPane.YES_NO_CANCEL_OPTION);
+                int grabar = JOptionPane.showConfirmDialog(this, "¿Deseas guardar la categoría?", "Registrar", JOptionPane.YES_NO_CANCEL_OPTION);
                 if (grabar == 0) {
                     boolean rpta = categoriaservice.ingresarCategoriaPlato(categoria);
                     if (rpta) {
@@ -361,7 +365,7 @@ public class categoriaplato extends javax.swing.JFrame {
                 if (categoria.id > 0) {
                     categoria.setNombre(rsmtNombre.getText());
                     categoria.setDescripcion(rsmtDescripcion.getText());
-                    int actualizar = JOptionPane.showConfirmDialog(this, "¿Deseas actulizar la categoría?", "Actualizar", 
+                    int actualizar = JOptionPane.showConfirmDialog(this, "¿Deseas actualizar la categoría?", "Actualizar", 
                             JOptionPane.YES_NO_CANCEL_OPTION);
                     if (actualizar == 0) {
                         boolean rpta = categoriaservice.actualizarCategoriaPlato(categoria);
@@ -404,7 +408,8 @@ public class categoriaplato extends javax.swing.JFrame {
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
         // TODO add your handling code here:
         if (categoria.id > 0) {
-            int eliminar = JOptionPane.showConfirmDialog(this, "¿Deseas eliminar la categoría?", "Eliminar", JOptionPane.YES_NO_CANCEL_OPTION);
+            int eliminar = JOptionPane.showConfirmDialog(this, "¿Deseas eliminar la categoría: "+categoria.nombre+"?", "Eliminar", 
+                    JOptionPane.YES_NO_CANCEL_OPTION);
             if (eliminar == 0) {
                 boolean rpta = categoriaservice.eliminarCategoria(categoria);
                 if (rpta) {

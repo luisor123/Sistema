@@ -75,6 +75,8 @@ public class usuarioform extends javax.swing.JFrame {
         btnGuardar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Usuario");
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -257,7 +259,7 @@ public class usuarioform extends javax.swing.JFrame {
             usuario.setTelefono(rsmtTelefono.getText());
             usuario.setPassword(rsmtPassword.getText());
             //
-            int grabar = JOptionPane.showConfirmDialog(this, "¿Deseas grabar el usuario?", 
+            int grabar = JOptionPane.showConfirmDialog(this, "¿Deseas guardar el usuario?", 
                     "Registrar", JOptionPane.YES_NO_CANCEL_OPTION);
             if (grabar == 0) {
                 boolean rpta = usuarioservice.ingresarUsuario(usuario);

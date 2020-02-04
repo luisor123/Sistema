@@ -107,7 +107,7 @@ public class VentaDetalleService {
                 cliente = new VentaDetalle();
             }
         } catch (Exception e) {
-            System.out.println("Error de conexion: "+e.getMessage());
+            System.out.println("Error: "+e.getMessage());
             JOptionPane.showMessageDialog(null, "Error: "+e.getMessage(), "Error", JOptionPane.ERROR);
         }
         return lista;

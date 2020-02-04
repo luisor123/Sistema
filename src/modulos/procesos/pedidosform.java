@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.TableModelEvent;
@@ -85,9 +86,9 @@ public class pedidosform extends javax.swing.JFrame {
     
     public void fechaActual() {
         Calendar c1 = Calendar.getInstance();
-        String fecha = c1.get(Calendar.DATE)+"-"+c1.get(Calendar.MONTH)+1+"-"+c1.get(Calendar.YEAR);
-        rsmtFecha.setText(fecha);
-        pedido.setFecha(fecha);
+        jdFecha.setCalendar(c1);
+        String fechaventa = ((JTextField)jdFecha.getDateEditor().getUiComponent()).getText();
+        pedido.setFecha(fechaventa);
     }
     
     public void listenerCambiarCelda() {
@@ -291,9 +292,9 @@ public class pedidosform extends javax.swing.JFrame {
         cbCategoria = new javax.swing.JComboBox<>();
         jPanel9 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        rsmtFecha = new rojeru_san.RSMTextFull();
         jLabel4 = new javax.swing.JLabel();
         lblNumeroPedido = new javax.swing.JLabel();
+        jdFecha = new com.toedter.calendar.JDateChooser();
         jPanel5 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         rsmtNombre = new rojeru_san.RSMTextFull();
@@ -403,12 +404,6 @@ public class pedidosform extends javax.swing.JFrame {
         jLabel2.setForeground(new java.awt.Color(0, 112, 192));
         jLabel2.setText("Fecha");
 
-        rsmtFecha.setEditable(false);
-        rsmtFecha.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
-        rsmtFecha.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
-        rsmtFecha.setModoMaterial(true);
-        rsmtFecha.setPlaceholder("Ingrese nombre...");
-
         jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(0, 112, 192));
         jLabel4.setText("N° pedido");
@@ -419,6 +414,10 @@ public class pedidosform extends javax.swing.JFrame {
         lblNumeroPedido.setText("012");
         lblNumeroPedido.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        jdFecha.setDateFormatString("yyyy/MM/dd HH:mm:ss");
+        jdFecha.setEnabled(false);
+        jdFecha.setFont(new java.awt.Font("Tahoma", 0, 13)); // NOI18N
+
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
         jPanel9Layout.setHorizontalGroup(
@@ -427,22 +426,26 @@ public class pedidosform extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
-                .addComponent(rsmtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33)
+                .addComponent(jdFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel4)
                 .addGap(18, 18, 18)
-                .addComponent(lblNumeroPedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblNumeroPedido, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rsmtFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel4)
-                    .addComponent(lblNumeroPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel4)
+                            .addComponent(lblNumeroPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel9Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jdFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -859,9 +862,9 @@ public class pedidosform extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private com.toedter.calendar.JDateChooser jdFecha;
     private javax.swing.JLabel lblMontoTotal;
     private javax.swing.JLabel lblNumeroPedido;
-    private rojeru_san.RSMTextFull rsmtFecha;
     private rojeru_san.RSMTextFull rsmtNombre;
     private javax.swing.JTable tablePlatos;
     private javax.swing.JTable tablePlatosCliente;

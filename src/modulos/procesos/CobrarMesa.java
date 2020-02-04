@@ -5,8 +5,11 @@
  */
 package modulos.procesos;
 
+import entidades.TipoDocumento;
 import entidades.Venta;
+import entidades.VentaDetalle;
 import java.sql.Connection;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import servicios.VentaService;
 
@@ -20,9 +23,12 @@ public class CobrarMesa extends javax.swing.JFrame {
      * Creates new form CobrarMesa
      */
     private Connection conection = null;
-    public VentaService ventaService;
-    public Venta venta;
-    public double vuelto;
+    private VentaService ventaService;
+    private ArrayList<VentaDetalle> listaventadetalle;
+    private ventaform ventaform;
+    private Venta venta;
+    private TipoDocumento tipodocumento;
+    private double vuelto;
     
     public CobrarMesa() {
         initComponents();
@@ -30,14 +36,18 @@ public class CobrarMesa extends javax.swing.JFrame {
         ventaService = new VentaService(conection);
     }
     
-    public CobrarMesa(Venta venta, Connection conection) {
+    public CobrarMesa(Venta venta, ArrayList<VentaDetalle> listaventadetalle, 
+            TipoDocumento tipodocumento, Connection conection, ventaform ventaform) {
         initComponents();
         this.setLocationRelativeTo(this);
         this.venta = venta;
+        this.listaventadetalle = listaventadetalle;
+        this.tipodocumento = tipodocumento;
         this.conection = conection;
         ventaService = new VentaService(conection);
         System.out.println(venta.getPreciototal());
         rsmtMontoPagar.setText(venta.getPreciototal()+"");
+        this.ventaform = ventaform;
         vuelto = -1;
     }
 
@@ -67,6 +77,8 @@ public class CobrarMesa extends javax.swing.JFrame {
         btnLimpiar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Cobrar");
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -173,6 +185,13 @@ public class CobrarMesa extends javax.swing.JFrame {
         if (vuelto >= 0 ) {
             boolean rpta = ventaService.actualizarVenta(venta);
             if (rpta) {
+                int opcion = JOptionPane.showConfirmDialog(this, "La venta se ha guardado correctamente\n"
+                        + "¿Deseas imprimir "+tipodocumento.nombre+"?", 
+                    "Éxito", JOptionPane.YES_NO_CANCEL_OPTION);
+                if (opcion == 0) {
+                    // aca se imprime el reporte
+                    ventaform.setMostrarReporte();
+                }
                 this.dispose();
             } else {
                 JOptionPane.showMessageDialog(null, "Error al ingresar la venta.", "Error", 

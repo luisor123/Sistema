@@ -115,6 +115,7 @@ public class VentaService {
                 venta.setNumdocumento(rs.getString("numdocumento"));
                 venta.setPreciototal(rs.getDouble("preciototal"));
                 venta.setFecha(rs.getString("fecha"));
+                venta.setFechaventa(rs.getString("fechaventa"));
             }
         } catch (Exception e) {
             System.out.println("Error: "+e.getMessage());

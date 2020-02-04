@@ -121,6 +121,7 @@ public class clienteform extends javax.swing.JFrame {
         btnEliminar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Cliente");
         setBackground(new java.awt.Color(255, 255, 255));
         setResizable(false);
 
@@ -184,6 +185,7 @@ public class clienteform extends javax.swing.JFrame {
 
         rsmtCodigo.setEditable(false);
         rsmtCodigo.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
+        rsmtCodigo.setFocusable(false);
         rsmtCodigo.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
         rsmtCodigo.setMaximumSize(new java.awt.Dimension(50, 50));
         rsmtCodigo.setModoMaterial(true);
@@ -407,7 +409,7 @@ public class clienteform extends javax.swing.JFrame {
                 cliente.setDireccion(rsmtDireccion.getText());
                 cliente.setRuc(rsmtRuc.getText());
                 cliente.setTelefono(rsmtTelefono.getText());
-                int grabar = JOptionPane.showConfirmDialog(this, "¿Deseas grabar el cliente?", "Registrar", JOptionPane.YES_NO_CANCEL_OPTION);
+                int grabar = JOptionPane.showConfirmDialog(this, "¿Deseas guardar el cliente?", "Registrar", JOptionPane.YES_NO_CANCEL_OPTION);
                 if (grabar == 0) {
                     boolean rpta = clienteservice.ingresarCliente(cliente);
                     if (rpta) {
@@ -422,7 +424,7 @@ public class clienteform extends javax.swing.JFrame {
                     cliente.setDireccion(rsmtDireccion.getText());
                     cliente.setRuc(rsmtRuc.getText());
                     cliente.setTelefono(rsmtTelefono.getText());
-                    int actualizar = JOptionPane.showConfirmDialog(this, "¿Deseas actulizar el cliente?", "Actualizar", 
+                    int actualizar = JOptionPane.showConfirmDialog(this, "¿Deseas actualizar el cliente?", "Actualizar", 
                             JOptionPane.YES_NO_CANCEL_OPTION);
                     if (actualizar == 0) {
                         boolean rpta = clienteservice.actualizarCliente(cliente);

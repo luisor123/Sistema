@@ -142,6 +142,7 @@ public class platoform extends javax.swing.JFrame {
         cbCategoria = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Plato");
         setResizable(false);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
@@ -271,6 +272,7 @@ public class platoform extends javax.swing.JFrame {
 
         rsmtCodigo.setEditable(false);
         rsmtCodigo.setBordeColorNoFocus(new java.awt.Color(153, 153, 153));
+        rsmtCodigo.setFocusable(false);
         rsmtCodigo.setFont(new java.awt.Font("Roboto Bold", 1, 12)); // NOI18N
         rsmtCodigo.setModoMaterial(true);
         rsmtCodigo.setPlaceholder("Código...");
